@@ -8,6 +8,11 @@ if page.status_code == 200:
     parsedPage = BeautifulSoup(page.content, 'lxml')
     topTenTags = parsedPage.find('div',{"class":"col-md-4 tags-box"})
     listTopTags = topTenTags.find_all('a')
-    print(listTopTags)
+
+    # for tag in listTopTags:
+    #     print(tag.attrs['href'])
+
+    print(parsedPage.h1.text)
+
 else:
     print("Page is not available")

@@ -7,10 +7,7 @@ if page.status_code == 200:
     print("Page is available")
     parsedPage = BeautifulSoup(page.content, 'lxml')
     
-    citations = parsedPage.find_all('span', class_='text')
-    listCitations = [citation.text for citation in citations]
-
-    print(listCitations)
+    print(parsedPage.select('a[href^="/tag/inspirational/page/1/"]'))
 
 else:
     print("Page is not available")

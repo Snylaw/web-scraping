@@ -7,6 +7,8 @@ class BookstoscrapSpider(scrapy.Spider):
     start_urls = ['http://books.toscrape.com/']
 
     def parse(self, response):
-        yield {
-            'links': response.xpath('//li')
+        result = {
+            'title': response.xpath('//head/title')
         }
+        
+        yield result

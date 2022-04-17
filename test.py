@@ -3,37 +3,38 @@ from bs4 import BeautifulSoup
 import json
 import pandas as pd
 
-page = requests.get("https://quotes.toscrape.com/")
 
-if page.status_code == 200:
-    print("Page is available")
+def extract_data(divQuotes):
+    quotes = divQuotes.find('span', class_='text').text
+    author = divQuotes.find('small', class_='author').text
+    tags = [tag.text for tag in divQuotes.find_all('a', class_='tag')]
+    data = {
+        'quotes': quotes,
+        'author': author,
+        'tags': tags
+    }
+    return data
+
+def getQuotes(pageUrl):
+    page = requests.get(pageUrl)
     parsedPage = BeautifulSoup(page.content, 'lxml')
+    quotes = parsedPage.find_all('div', class_='quote')
 
-    divQuotes = parsedPage.find_all('div', class_='quote')
+    if(len(quotes) > 0):
+        listQuotes = [extract_data(quote) for quote in quotes]
+        return listQuotes
+    else:
+        return None
 
-    def extract_data(divQuotes):
-        quotes = divQuotes.find('span', class_='text').text
-        author = divQuotes.find('small', class_='author').text
-        tags = [tag.text for tag in divQuotes.find_all('a', class_='tag')]
-        data = {
-            'quotes': quotes,
-            'author': author,
-            'tags': tags
-        }
-        return data
+data = getQuotes('http://quotes.toscrape.com/')
+for i in range(2,100):
+    pageUrl = f'http://quotes.toscrape.com/page/{i}/'
+    currentPageQuotes = getQuotes(pageUrl)
 
-    listQuotes = []
+    if(currentPageQuotes is not None):
+        data.extend(currentPageQuotes)
+    else:
+        break
 
-    for quotes in divQuotes:
-        listQuotes.append(extract_data(quotes))
-
-    # with open('quotes.json', 'w') as file:
-    #     json.dump(listQuotes, file)
-
-    dataPd = pd.DataFrame.from_dict(listQuotes)
-    # print(dataPd.head(3))
-    dataPd.to_json('quotes_first_panda.json')
-    dataPd.to_csv('quotes_first_panda.csv')
-
-else:
-    print("Page is not available")
+dataPd = pd.DataFrame.from_dict(data)
+dataPd.to_csv('quotes_full.csv')

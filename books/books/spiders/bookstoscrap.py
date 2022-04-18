@@ -8,7 +8,7 @@ class BookstoscrapSpider(scrapy.Spider):
 
     def parse(self, response):
         result = {
-            'title': response.xpath('//head/title/text()').get(),
+            'productsPrice': response.xpath('//p[@class="price_color"]/text()').getall(),
         }
         
         yield result

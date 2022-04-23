@@ -1,3 +1,4 @@
+from unicodedata import category
 import scrapy
 
 
@@ -7,11 +8,11 @@ class BookstoscrapSpider(scrapy.Spider):
     start_urls = ['http://books.toscrape.com/']
 
     def parse(self, response):
-        books = response.xpath("//h3[contains(.//text(),'the')]")
-        text = books.xpath('.//text()').getall()
+        category = response.xpath('//div[@class="side_categories"]/ul/li/ul/li')
+        text = category.xpath('normalize-space(.//a/text())').getall()
         
         result = {
-            'text_book': text
+            'category': text
         }
         
         yield result

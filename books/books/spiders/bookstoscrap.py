@@ -7,8 +7,13 @@ class BookstoscrapSpider(scrapy.Spider):
     start_urls = ['http://books.toscrape.com/']
 
     def parse(self, response):
+        bookBlock = response.xpath('//li[@class="col-xs-6 col-sm-4 col-md-3 col-lg-3"]')[0]
+        title = bookBlock.xpath('.//h3/a/text()').get()
+        price = bookBlock.xpath('.//p[@class="price_color"]/text()').get()
+
         result = {
-            'productsPrice': response.xpath('//p[@class="price_color"]/text()').getall(),
+            'title': title,
+            'price': price
         }
         
         yield result

@@ -8,11 +8,13 @@ class BookstoscrapSpider(scrapy.Spider):
     start_urls = ['http://books.toscrape.com/']
 
     def parse(self, response):
-        category = response.xpath('//div[@class="side_categories"]/ul/li/ul/li')
-        text = category.xpath('normalize-space(.//a/text())').getall()
+        div_image = response.xpath('//div[@class="image_container"]')[0]
+        div_image_child = div_image.xpath('.//child::node()')
+        div_image_sibling = div_image.xpath('.//following-sibling::node()')
+        div_image_parents = div_image.xpath('.//ancestor::node()')
         
         result = {
-            'category': text
+            'div': div_image_parents
         }
         
         yield result

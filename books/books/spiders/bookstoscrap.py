@@ -7,11 +7,11 @@ class BookstoscrapSpider(scrapy.Spider):
     start_urls = ['http://books.toscrape.com/']
 
     def parse(self, response):
-        bookBlock = response.xpath('//li[@class="col-xs-6 col-sm-4 col-md-3 col-lg-3"]')[0]
+        books = response.xpath("//h3[contains(.//text(),'the')]")
+        text = books.xpath('.//text()').getall()
         
         result = {
-            'url': bookBlock.xpath('.//h3/a/@href').get(),
-            'title': bookBlock.xpath('.//h3/a/@title').get()
+            'text_book': text
         }
         
         yield result
